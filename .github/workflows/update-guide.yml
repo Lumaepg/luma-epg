@@ -58,6 +58,11 @@ jobs:
           if (Test-Path epg/intl.xml) { ./finish-guide.ps1 -Guide epg/intl.xml -Sources epg/intl.sources.json }
           if (Test-Path epg/northamerica.xml) { ./finish-guide.ps1 -Guide epg/northamerica.xml -Sources epg/na.sources.json }
 
+      - name: Fill US gaps from EPGTalk
+        continue-on-error: true
+        shell: pwsh
+        run: if (Test-Path epg/northamerica.xml) { &"$env:GITHUB_WORKSPACE/add-epgtalk.ps1" -Guide epg/northamerica.xml }
+
       - name: Publish to the "guide" branch
         run: |
           mkdir out
