@@ -27,11 +27,10 @@ jobs:
       - name: Build the channel lists
         shell: pwsh
         run: |
-            &"$env:GITHUB_WORKSPACE/make-na-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out na.channels.xml
-            &"$env:GITHUB_WORKSPACE/make-uk-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out uk.channels.xml
-            &"$env:GITHUB_WORKSPACE/make-intl-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out intl.channels.xml
-          
-          
+          &"$env:GITHUB_WORKSPACE/make-na-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out na.channels.xml
+          &"$env:GITHUB_WORKSPACE/make-uk-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out uk.channels.xml
+          &"$env:GITHUB_WORKSPACE/make-intl-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out intl.channels.xml
+          &"$env:GITHUB_WORKSPACE/make-au-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out au.channels.xml
 
       - name: Collect US/Canada listings
         continue-on-error: true
@@ -51,10 +50,17 @@ jobs:
         working-directory: epg
         run: npm run grab --- --channels=intl.channels.xml --output=intl.xml --days=2 --maxConnections=5
 
+      - name: Collect Australian sport listings
+        continue-on-error: true
+        timeout-minutes: 60
+        working-directory: epg
+        run: npm run grab --- --channels=au.channels.xml --output=au.xml --days=2 --maxConnections=5
+
       - name: Pick the best source for each channel
         shell: pwsh
         run: |
           if (Test-Path epg/uk.xml) { ./finish-guide.ps1 -Guide epg/uk.xml -Sources epg/uk.sources.json }
+          if (Test-Path epg/au.xml) { ./finish-guide.ps1 -Guide epg/au.xml -Sources epg/au.sources.json }
           if (Test-Path epg/intl.xml) { ./finish-guide.ps1 -Guide epg/intl.xml -Sources epg/intl.sources.json }
           if (Test-Path epg/northamerica.xml) { ./finish-guide.ps1 -Guide epg/northamerica.xml -Sources epg/na.sources.json }
 
@@ -66,7 +72,7 @@ jobs:
       - name: Publish to the "guide" branch
         run: |
           mkdir out
-          for f in northamerica uk intl; do
+          for f in northamerica uk intl au; do
             if [ -s "epg/$f.xml" ]; then gzip -c "epg/$f.xml" > "out/$f.xml.gz"; fi
           done
           ls out/*.xml.gz
