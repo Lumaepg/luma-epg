@@ -131,6 +131,7 @@ $provider = @(
   'SKY NEWS HD',
   'SKY SCI-FI HD',
   'SKY SPORTS ACTION',
+  'SKY SPORTS+',
   'SKY SPORTS CRICKET',
   'SKY SPORTS F1',
   'SKY SPORTS FOOTBALL',
@@ -206,6 +207,7 @@ $aliases = @{
   'SKY CINEMA ANIMATION'       = @('SkyAnimationHD', 'Sky Animation HD')
   'SKY CINEMA SCIFI/HORROR'    = @('Sky Cinema Sci-Fi & Horror', 'Sky Cinema Sci-Fi/Horror')
   'SKY SPORTS ACTION'          = @('Sky Sports Action')
+  'SKY SPORTS+'                = @('SkySp+', 'SkySp+ HD', 'Sky Sports +', 'Sky Sports + HD', 'Sky Sports Plus')
   'SKYCOMEDY'                  = @('Sky Comedy')
   'SKYCOMEDY HD'               = @('Sky Comedy')
   'SONY SAB'                   = @('SAB')
