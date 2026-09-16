@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
 
@@ -27,9 +27,11 @@ jobs:
       - name: Build the channel lists
         shell: pwsh
         run: |
-          ./make-na-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out na.channels.xml
-          ./make-uk-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out uk.channels.xml
-          ./make-intl-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out intl.channels.xml
+            &"$env:GITHUB_WORKSPACE/make-na-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out na.channels.xml
+            &"$env:GITHUB_WORKSPACE/make-uk-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out uk.channels.xml
+            &"$env:GITHUB_WORKSPACE/make-intl-channels.ps1" -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out intl.channels.xml
+          
+          
 
       - name: Collect US/Canada listings
         continue-on-error: true
