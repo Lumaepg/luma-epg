@@ -1,0 +1,73 @@
+name: Update guides
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # every day at 04:00 UTC
+  workflow_dispatch:       # "Run workflow" button for a manual refresh
+
+permissions:
+  contents: write
+
+jobs:
+  grab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download the iptv-org guide collector
+        run: |
+          git clone --depth 1 -b master https://github.com/iptv-org/epg.git epg
+          cd epg && npm install
+
+      - name: Build the channel lists
+        shell: pwsh
+        run: |
+          ./make-na-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out na.channels.xml
+          ./make-uk-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out uk.channels.xml
+          ./make-intl-channels.ps1 -EpgDir "$env:GITHUB_WORKSPACE/epg" -Out intl.channels.xml
+
+      - name: Collect US/Canada listings
+        continue-on-error: true
+        timeout-minutes: 120
+        working-directory: epg
+        run: npm run grab --- --channels=na.channels.xml --output=northamerica.xml --days=2 --maxConnections=5
+
+      - name: Collect UK/Ireland listings
+        continue-on-error: true
+        timeout-minutes: 120
+        working-directory: epg
+        run: npm run grab --- --channels=uk.channels.xml --output=uk.xml --days=2 --maxConnections=5
+
+      - name: Collect foreign channel listings
+        continue-on-error: true
+        timeout-minutes: 60
+        working-directory: epg
+        run: npm run grab --- --channels=intl.channels.xml --output=intl.xml --days=2 --maxConnections=5
+
+      - name: Pick the best source for each channel
+        shell: pwsh
+        run: |
+          if (Test-Path epg/uk.xml) { ./finish-guide.ps1 -Guide epg/uk.xml -Sources epg/uk.sources.json }
+          if (Test-Path epg/intl.xml) { ./finish-guide.ps1 -Guide epg/intl.xml -Sources epg/intl.sources.json }
+          if (Test-Path epg/northamerica.xml) { ./finish-guide.ps1 -Guide epg/northamerica.xml -Sources epg/na.sources.json }
+
+      - name: Publish to the "guide" branch
+        run: |
+          mkdir out
+          for f in northamerica uk intl; do
+            if [ -s "epg/$f.xml" ]; then gzip -c "epg/$f.xml" > "out/$f.xml.gz"; fi
+          done
+          ls out/*.xml.gz
+          cp epg/*-report.csv out/ 2>/dev/null || true
+          cd out
+          git init -b guide
+          git config user.name "guide-bot"
+          git config user.email "guide-bot@users.noreply.github.com"
+          git add .
+          git commit -m "Guide $(date -u +%F)"
+          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" guide
