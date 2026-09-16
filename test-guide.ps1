@@ -4,8 +4,9 @@
 #   pwsh -ExecutionPolicy Bypass -File test-guide.ps1 -Region uk
 #   pwsh -ExecutionPolicy Bypass -File test-guide.ps1 -Region na
 #   pwsh -ExecutionPolicy Bypass -File test-guide.ps1 -Region intl
+#   pwsh -ExecutionPolicy Bypass -File test-guide.ps1 -Region au
 param(
-  [Parameter(Mandatory)][ValidateSet('uk', 'na', 'intl')][string]$Region,
+  [Parameter(Mandatory)][ValidateSet('uk', 'na', 'intl', 'au')][string]$Region,
   [string]$EpgDir = "$env:USERPROFILE\epg",
   [int]$Days = 1
 )
