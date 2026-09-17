@@ -8,6 +8,7 @@ Runs the iptv-org EPG collector every day at 04:00 UTC and publishes XMLTV guide
 | `northamerica.xml.gz` | US/Canada movie, entertainment, news and sports channels | tvpassport.com, tvguide.com, tvtv.us (EPGTalk fills gaps) |
 | `intl.xml.gz` | Foreign channels in the UK section (ESPN NL, Sport TV, SuperSport, beIN, Real Madrid TV, Court TV) | local sites for each country |
 | `au.xml.gz` | Australian sport: Fox Cricket, Fox Sports 502–507, ESPN, ESPN 2, Sky Racing 1–2, Racing.com | foxtel.com.au (ontvtonight.com backup) |
+| `NZ http://i.mjh.nz/SkyGo/epg.xml.gz` *(external, not built here)* | New Zealand Sky Sport and other Sky NZ channels | i.mjh.nz (Sky Go NZ, updated daily) |
 
 Each guide has a matching `*-report.csv` showing how many programmes each channel got and which site they came from.
 
