@@ -20,7 +20,11 @@ Settings → **Extra EPG URLs**, one per line:
     https://raw.githubusercontent.com/Lumaepg/luma-epg/guide/intl.xml.gz
     AU https://raw.githubusercontent.com/Lumaepg/luma-epg/guide/au.xml.gz
 
-The `AU` prefix stops Australian listings being used for same-named channels from other countries (for example ESPN). Turn on **Prefer extra guides** if you want these listings to replace your provider's for shared channels.
+For New Zealand Sky Sport, add this guide too. It isn't built by this repository: it's a public daily guide from [i.mjh.nz](https://i.mjh.nz), which was too large for the collector here.
+
+    NZ http://i.mjh.nz/SkyGo/epg.xml.gz
+
+The `AU` and `NZ` prefixes stop Australian and New Zealand listings being used for same-named channels from other countries (for example ESPN). Turn on **Prefer extra guides** if you want these listings to replace your provider's for shared channels.
 
 Channel ids follow one provider's naming (e.g. `BBC ONE`, `AU | FOX SPORTS 503`). Luma also matches by channel name, but if your provider names channels differently, fork the repository and edit the channel lists (below).
 
